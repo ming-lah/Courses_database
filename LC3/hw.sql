@@ -1,0 +1,131 @@
+Use School;
+GO
+
+-- students (sid, sname , email , grade)
+-- teachers (tid, tname , email , salary )
+-- courses (cid, cname , hour )
+-- choices (no, sid , tid , cid , score )
+
+-- (1)
+SELECT DISTINCT STUDENTS.sid, STUDENTS.sname
+FROM STUDENTS, CHOICES
+WHERE STUDENTS.sid=CHOICES.sid
+    AND CHOICES.CID=(SELECT CID FROM COURSES WHERE cname='c++')
+    AND CHOICES.score >ALL(
+        SELECT score
+        FROM STUDENTS, CHOICES
+        WHERE STUDENTS.sid=CHOICES.sid
+        AND STUDENTS.sname='ZNKOO'
+        AND CHOICES.cid=(SELECT CID FROM COURSES WHERE cname='c++')
+        AND CHOICES.score IS NOT NULL
+    )
+
+-- (2)
+SELECT SNAME
+FROM STUDENTS
+WHERE STUDENTS.grade IN(
+    SELECT GRADE 
+    FROM STUDENTS
+    WHERE sid IN('883794999','850955252')
+)
+
+-- (3)
+SELECT SNAME
+FROM STUDENTS
+WHERE SID NOT IN(
+    SELECT CHOICES.sid
+    FROM CHOICES, COURSES
+    WHERE CHOICES.CID=COURSES.cid
+    AND COURSES.cname='Java'
+)
+
+-- (4)
+SELECT *
+FROM COURSES
+WHERE COURSES.[hour]<=ALL(
+    SELECT [hour]
+    FROM COURSES
+    WHERE HOUR IS NOT NULL
+)
+
+
+-- (5)
+SELECT TEACHERS.tid, CID
+FROM TEACHERS, CHOICES
+WHERE TEACHERS.salary>=ALL(
+    SELECT salary
+    FROM TEACHERS
+    WHERE salary IS NOT NULL
+)
+AND TEACHERS.tid=CHOICES.tid
+
+-- (6)
+SELECT STUDENTS.sid
+FROM STUDENTS, CHOICES
+WHERE STUDENTS.sid=CHOICES.sid
+AND CHOICES.cid=(SELECT cid FROM COURSES WHERE cname='ERP')
+AND score>=ALL(
+    SELECT score
+    FROM CHOICES, COURSES
+    WHERE COURSES.cid=CHOICES.cid
+    AND COURSES.cname='ERP'
+    AND score IS NOT NULL
+)
+
+
+-- (7)
+SELECT CNAME
+FROM COURSES
+WHERE CID NOT IN(
+    SELECT CID
+    FROM CHOICES
+)
+
+-- (8)
+SELECT CNAME
+FROM COURSES
+WHERE COURSES.CID IN(
+    SELECT CHOICES.cid
+    FROM CHOICES
+    WHERE CHOICES.tid IN (
+        SELECT CHOICES.tid
+        FROM CHOICES, COURSES
+        WHERE CHOICES.cid=COURSES.cid
+        AND COURSES.cname='UML'
+    )
+)
+
+
+-- (9)
+SELECT sid
+FROM CHOICES
+WHERE CHOICES.cid=(
+    SELECT cid
+    FROM COURSES
+    WHERE COURSES.cname='database'
+)
+INTERSECT
+SELECT sid
+FROM CHOICES
+WHERE CHOICES.cid=(
+    SELECT cid
+    FROM COURSES
+    WHERE COURSES.cname='UML'
+)
+
+-- (10)
+SELECT sid
+FROM CHOICES
+WHERE CHOICES.cid=(
+    SELECT cid
+    FROM COURSES
+    WHERE COURSES.cname='database'
+)
+EXCEPT
+SELECT sid
+FROM CHOICES
+WHERE CHOICES.cid=(
+    SELECT cid
+    FROM COURSES
+    WHERE COURSES.cname='UML'
+)

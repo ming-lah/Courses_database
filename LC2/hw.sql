@@ -1,0 +1,62 @@
+USE School;
+GO
+
+-- students (sid, sname , email , grade)
+-- teachers (tid, tname , email , salary )
+-- courses (cid, cname , hour )
+-- choices (no, sid , tid , cid , score )
+
+
+-- (1)
+SELECT *
+FROM COURSES
+
+-- (2)
+SELECT DISTINCT SID
+FROM CHOICES
+
+-- (3)
+SELECT CID
+FROM COURSES
+WHERE COURSES.[hour]<88
+
+-- (4)
+SELECT SID
+FROM STUDENTS
+WHERE STUDENTS.grade>400
+
+-- (5)
+SELECT COUNT(*) AS count
+FROM COURSES
+
+-- (6)
+SELECT CID, COUNT(DISTINCT SID) AS count
+FROM CHOICES
+GROUP BY CID
+
+-- (7)
+SELECT SID
+FROM CHOICES
+WHERE score>60
+GROUP BY SID
+HAVING COUNT(*)>2
+
+-- (8)
+SELECT SID, COUNT(SID) AS COUNT, AVG(score) AS AVG_SCORES
+FROM CHOICES
+GROUP BY SID
+
+-- (9)
+SELECT CHOICES.SID, STUDENTS.sname
+FROM CHOICES, STUDENTS, COURSES
+WHERE COURSES.cname = 'Java' AND STUDENTS.sid = CHOICES.sid AND COURSES.cid = CHOICES.cid
+
+-- (10)
+SELECT CHOICES.CID, CHOICES.score
+FROM CHOICES, STUDENTS
+WHERE STUDENTS.sname='sssht' AND CHOICES.sid=STUDENTS.sid
+
+-- (11)
+SELECT cname
+FROM COURSES
+WHERE COURSES.[hour] > (SELECT HOUR FROM COURSES WHERE cname='c++')
